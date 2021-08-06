@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CenterButton">
+        <attr name="buttonColor" format="color" />
+        <attr name="leftText" format="string" />
+        <attr name="centerText" format="string" />
+        <attr name="rightText" format="string" />
+        <attr name="color" format="color" />
+        <attr name="pressedColor" format="color" />
+        <attr name="borderColor" format="color" />
+    </declare-styleable>
+
+
+    <declare-styleable name="ConnectButton">
+        <attr name="radius" format="float" />
+        <attr name="connectedColor" format="color" />
+        <attr name="connectingColor" format="color" />
+        <attr name="disconnectedColor" format="color" />
+    </declare-styleable>
+
+</resources>

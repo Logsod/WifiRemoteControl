@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#121212"
+        tools:context=".MainActivity">
+        <!--
+
+           <EditText
+               android:id="@+id/passNewData"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_above="@+id/sendDataButton"
+               android:layout_marginBottom="160dp"
+               android:ems="10"
+               android:inputType="textPersonName"
+               android:text="data" />
+       -->
+        <com.local.wifi.uiView.ConnectButton
+            android:id="@+id/buttonConnectedStatus"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            app:connectedColor="#00E400"
+            app:connectingColor="#00E400"
+            app:disconnectedColor="#DF0000"
+            app:layout_constraintBottom_toBottomOf="@+id/buttonIp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/buttonIp"
+            app:radius="10" />
+
+        <ImageView
+            android:id="@+id/monitorSvg"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:src="@drawable/ic_monitor"
+            app:layout_constraintBottom_toTopOf="@+id/circleButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/button_monitor_off"
+            android:layout_width="40dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="24dp"
+            android:gravity="center"
+            android:text="OFF"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/monitorSvg"
+            app:layout_constraintEnd_toStartOf="@+id/monitorSvg"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/monitorSvg" />
+
+        <TextView
+            android:id="@+id/button_monitor_on"
+            android:layout_width="40dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="24dp"
+            android:gravity="center"
+            android:text="ON"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/monitorSvg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/monitorSvg"
+            app:layout_constraintTop_toTopOf="@+id/monitorSvg" />
+
+        <com.local.wifi.uiView.CircleButton
+            android:id="@+id/circleButton"
+            android:layout_width="match_parent"
+            android:layout_height="140dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="24dp"
+            app:borderColor="?colorAccent"
+            app:color="?colorPrimaryDark"
+
+            app:layout_constraintBottom_toTopOf="@+id/seekBarVolume"
+            app:pressedColor="?colorAccent" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/buttonIp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/circleButton"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="?colorPrimaryDark"
+            android:text="IP"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <SeekBar
+            android:id="@+id/seekBarVolume"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:layout_editor_absoluteX="0dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
