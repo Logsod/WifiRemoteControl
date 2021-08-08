@@ -17,7 +17,7 @@ class MainActivityAppModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun provideWordsPresenter(): MainPresenter {
-        return MainPresenter()
+    fun provideWordsPresenter(context: Context): MainPresenter {
+        return MainPresenter(context)
     }
 }

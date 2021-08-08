@@ -2,29 +2,28 @@ package com.local.wifi
 
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
+import android.app.Dialog
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.Window
 import android.widget.Button
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.databinding.DataBindingUtil
 import com.local.wifi.databinding.ActivityMainBinding
 import com.local.wifi.presenter.MainPresenter
 import com.local.wifi.uiView.CircleButton
-import com.local.wifi.uiView.ConnectButton
 import com.local.wifi.uiView.ConnectButtonStates
 import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.IO
 import moxy.MvpAppCompatActivity
 import moxy.ktx.moxyPresenter
-import java.io.*
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
-import kotlin.math.log
 
 
 class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView,
@@ -35,11 +34,13 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView,
     private var outputData: String = ""
     lateinit var binding: ActivityMainBinding
 
-    private suspend fun client(addr: String, port: Int) {
+    @Suppress("BlockingMethodInNonBlockingContext")
+    private suspend fun client(addr: String, port: Int) { //= withContext(Dispatchers.IO) {
         try {
             //val connection = Socket(addr, port)
             val connection = Socket()
-            connection.connect(InetSocketAddress(addr,port), 3*1000)
+
+            connection.connect(InetSocketAddress(addr, port), 3 * 1000)
 
             val writer = connection.getOutputStream()
             writer.write(1)
@@ -63,7 +64,7 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView,
             writer.close()
             connection.close()
         } catch (e: Exception) {
-            Log.e(this.toString(), e.message)
+            Log.e(this.toString(), e.message ?: "error connect to remote server")
         }
     }
 
@@ -93,17 +94,20 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView,
 //            if (it is TextView)
 //                animateColor(it)
             presenter.onIpPressed()
+            //showIpDialog()
             //active = true
             //CoroutineScope(IO).launch { client("192.168.0.101", 8850) }
         }
 
         supportActionBar?.hide()
 
+        binding.seekBarVolume.progress = presenter.currentVolume
         binding.seekBarVolume.setOnSeekBarChangeListener(object :
             SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
 
                 outputData = "  v:$progress;"
+
                 presenter.sendCommand(outputData)
             }
 
@@ -116,38 +120,24 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView,
                 outputData = "  v:" + seekBar?.progress.toString() + ";"
                 presenter.sendCommand(outputData)
             }
+        })
+    }
+
+    override fun showIpDialog(ip: String) {
+
+        val dialog = Dialog(this, R.style.ThemeDialog)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.window?.requestFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.ip_dialog)
+        val editTextIp = dialog.findViewById<AppCompatEditText>(R.id.edit_text_ip)
+        editTextIp.setText(ip)
+        val buttonConnect = dialog.findViewById<Button>(R.id.button_connect)
+        buttonConnect.setOnClickListener {
+            dialog.dismiss()
+            presenter.onConnectPressed(editTextIp.text.toString().trim())
         }
-
-        )
-
-
-        //CoroutineScope(IO).launch { makeServiceCall() }
-        //GlobalScope.launch {  }
-//        val data : String = "some data"
-//        Thread {
-//
-//            val client = Socket("192.168.0.101", 8850)
-//            val output = PrintWriter(client.getOutputStream(), true)
-//            val input = BufferedReader(InputStreamReader(client.inputStream))
-//            output.print("hello")
-//            Log.e("debug","Client sending [Hello]")
-//            output.println()
-//            (0..50).asFlow().onEach { it ->
-//                output.println(it)
-//                delay(100)
-//            }
-//            while (true){
-//
-//                Log.e("debug","Client receiving [${input.readLine()}]")
-//
-//            }
-//            client.close()
-//
-//
-//            Log.e("tag","socket is closed")
-//        }.start()
-
-
+        dialog.show()
     }
 
     fun animateColor(view: TextView) {
@@ -160,7 +150,7 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView,
     }
 
     override fun setConnectedStatus(state: ConnectButtonStates) {
-        Log.e(this.toString(),"setConnectedStatus ")
+        Log.e(this.toString(), "setConnectedStatus ")
         binding.buttonConnectedStatus.setStatus(state)
     }
 

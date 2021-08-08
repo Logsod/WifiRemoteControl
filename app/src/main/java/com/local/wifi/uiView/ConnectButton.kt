@@ -11,7 +11,6 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.VectorDrawable
 import android.os.Build
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.CycleInterpolator
@@ -168,13 +167,11 @@ class ConnectButton(context: Context, attributeSet: AttributeSet) : View(context
 
     fun setStatus(state: ConnectButtonStates) {
         if (state == ConnectButtonStates.DISCONNECTED) {
-            Log.e(this.toString(),"try to start DISCONNECTED animation")
             animator?.cancel()
             currenColor = disconnectedColor
             invalidate()
         }
         if (state == ConnectButtonStates.CONNECTING) {
-            Log.e(this.toString(),"try to start CONNECTING animation")
             animator?.cancel()
             animator = ValueAnimator.ofArgb(connectedColor, disconnectedColor).apply {
                 duration = 400
@@ -193,7 +190,6 @@ class ConnectButton(context: Context, attributeSet: AttributeSet) : View(context
             }
         }
         if (state == ConnectButtonStates.CONNECTED) {
-            Log.e(this.toString(),"try to start CONNECTED animation")
             animator?.cancel()
             currenColor = connectedColor
             invalidate()

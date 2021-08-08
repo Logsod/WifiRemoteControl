@@ -1,8 +1,7 @@
 package com.local.wifi.presenter
 
-import android.util.Log
+import android.content.Context
 import com.local.wifi.MainView
-import com.local.wifi.uiView.ConnectButton
 import com.local.wifi.uiView.ConnectButtonStates
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -11,60 +10,64 @@ import moxy.InjectViewState
 import moxy.MvpPresenter
 import moxy.presenterScope
 
-@InjectViewState
-class MainPresenter : MvpPresenter<MainView>() {
+import javax.inject.Inject
 
-    val client = Client()
+
+@InjectViewState
+class MainPresenter @Inject constructor(
+    var context: Context
+) : MvpPresenter<MainView>() {
+
+    private val client = Client()
+    var currentVolume = 0
+
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         viewState.setConnectedStatus(ConnectButtonStates.DISCONNECTED)
     }
 
-    fun sendCommand(cmd : String){
+    fun sendCommand(cmd: String) {
+        if (cmd.first() == 'v') {
+            val command = cmd.replace(";", "").trim().split(":")
+            if (command.size == 2) {
+                currentVolume = command[1].trim().toInt()
+            }
+        }
         client.sendCommand(cmd)
     }
 
     fun onMonitorOffPressed() {
-        Log.e(this.toString(), "onMonitorOffPressed")
         client.sendCommand("m:0;")
     }
 
     fun onMonitorOnPressed() {
-        Log.e(this.toString(), "onMonitorOnPressed")
         client.sendCommand("m:1;")
     }
 
     fun onConnectStatusPressed() {
-        Log.e(this.toString(), "onConnectStatusPressed")
     }
 
     fun onLeftPressed() {
-        Log.e(this.toString(), "onLeftPressed")
         client.sendCommand("b:0;")
     }
 
     fun onCenterPressed() {
-        Log.e(this.toString(), "onCenterPressed")
         client.sendCommand("b:1;")
     }
 
     fun onRightPressed() {
-        Log.e(this.toString(), "onRightPressed")
         client.sendCommand("b:2;")
     }
 
-    fun onIpPressed() {
-        Log.e(this.toString(), "onIpPressed")
-
-
-        if(client.isActive) {
+    fun onConnectPressed(remoteServerIp: String) {
+        saveRemoteAddr(remoteServerIp)
+        if (client.isActive) {
             client.disconnect()
             viewState.setConnectedStatus(ConnectButtonStates.DISCONNECTED)
-            return
         }
         presenterScope.launch {
-            client.client("192.168.0.101", 8850).subscribeOn(Schedulers.io())
+            client.client(remoteServerIp, 8850).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     {
@@ -79,10 +82,19 @@ class MainPresenter : MvpPresenter<MainView>() {
                                 viewState.setConnectedStatus(ConnectButtonStates.CONNECTED)
                             }
                         }
-                        Log.e(this.toString(), it.toString())
                     }, {})
 
         }
     }
 
+    fun onIpPressed() {
+        val settings = context.getSharedPreferences("appSettings", Context.MODE_PRIVATE)
+        val ip = settings.getString("remoteIp", "") ?: ""
+        viewState.showIpDialog(ip)
+    }
+
+    fun saveRemoteAddr(str: String) {
+        val settings = context.getSharedPreferences("appSettings", Context.MODE_PRIVATE)
+        settings.edit().putString("remoteIp", str).apply()
+    }
 }
