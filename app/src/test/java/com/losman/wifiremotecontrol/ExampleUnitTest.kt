@@ -1,4 +1,4 @@
-package com.local.wifi
+package com.losman.wifiremotecontrol
 
 import org.junit.Test
 

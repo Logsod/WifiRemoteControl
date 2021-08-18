@@ -1,9 +1,7 @@
-package com.local.wifi
+package com.losman.wifiremotecontrol
 
-import com.local.wifi.uiView.ConnectButton
-import com.local.wifi.uiView.ConnectButtonStates
+import com.losman.wifiremotecontrol.uiView.ConnectButtonStates
 import moxy.MvpView
-import moxy.viewstate.strategy.alias.AddToEnd
 import moxy.viewstate.strategy.alias.AddToEndSingle
 import moxy.viewstate.strategy.alias.Skip
 
@@ -12,5 +10,8 @@ interface MainView : MvpView {
     fun setConnectedStatus(state: ConnectButtonStates)
 
     @Skip
-    fun showIpDialog(ip: String)
+    fun showIpDialog(ip: String, password: String)
+
+    @Skip
+    fun showMessage(message: String)
 }

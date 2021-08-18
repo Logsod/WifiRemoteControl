@@ -1,8 +1,8 @@
-package com.local.wifi.di
+package com.losman.wifiremotecontrol.di
 
 import android.app.Application
 import android.content.Context
-import com.local.wifi.presenter.MainPresenter
+import com.losman.wifiremotecontrol.presenter.MainPresenter
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

@@ -1,29 +1,29 @@
-package com.local.wifi
+package com.losman.wifiremotecontrol
 
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.app.Dialog
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.Window
 import android.widget.Button
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import com.local.wifi.databinding.ActivityMainBinding
-import com.local.wifi.presenter.MainPresenter
-import com.local.wifi.uiView.CircleButton
-import com.local.wifi.uiView.ConnectButtonStates
-import kotlinx.coroutines.*
+import com.losman.wifiremotecontrol.databinding.ActivityMainBinding
+import com.losman.wifiremotecontrol.presenter.MainPresenter
+import com.losman.wifiremotecontrol.uiView.CircleButton
+import com.losman.wifiremotecontrol.uiView.ConnectButtonStates
 import moxy.MvpAppCompatActivity
 import moxy.ktx.moxyPresenter
-import java.net.InetSocketAddress
-import java.net.Socket
-import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
+import io.github.muddz.styleabletoast.StyleableToast
+
+
+
 
 
 class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView,
@@ -33,40 +33,6 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView,
     private var data: String = ""
     private var outputData: String = ""
     lateinit var binding: ActivityMainBinding
-
-    @Suppress("BlockingMethodInNonBlockingContext")
-    private suspend fun client(addr: String, port: Int) { //= withContext(Dispatchers.IO) {
-        try {
-            //val connection = Socket(addr, port)
-            val connection = Socket()
-
-            connection.connect(InetSocketAddress(addr, port), 3 * 1000)
-
-            val writer = connection.getOutputStream()
-            writer.write(1)
-            val reader = Scanner(connection.getInputStream())
-            while (active) {
-                var input = ""
-                if (connection.inputStream.available() > 0) {
-                    data = reader.nextLine()
-                    Log.e("tag", data)
-
-                }
-                if (outputData.isNotEmpty()) {
-                    writer.write(outputData.length)
-                    writer.write(outputData.toByteArray())
-                    outputData = ""
-                }
-
-                delay(100)
-            }
-            reader.close()
-            writer.close()
-            connection.close()
-        } catch (e: Exception) {
-            Log.e(this.toString(), e.message ?: "error connect to remote server")
-        }
-    }
 
     @Inject
     lateinit var presenterProvider: Provider<MainPresenter>
@@ -123,7 +89,17 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView,
         })
     }
 
-    override fun showIpDialog(ip: String) {
+    override fun showMessage(message: String) {
+        if (message.isEmpty()) return
+        StyleableToast.Builder(this)
+            .text(message)
+            .textColor(ContextCompat.getColor(this, R.color.colorPrimary))
+            .backgroundColor(ContextCompat.getColor(this, R.color.colorAccent))
+            .show()
+    }
+
+
+    override fun showIpDialog(ip: String, password: String) {
 
         val dialog = Dialog(this, R.style.ThemeDialog)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -131,11 +107,16 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView,
         dialog.setCancelable(true)
         dialog.setContentView(R.layout.ip_dialog)
         val editTextIp = dialog.findViewById<AppCompatEditText>(R.id.edit_text_ip)
+        val editTextPassword = dialog.findViewById<AppCompatEditText>(R.id.edit_text_password)
         editTextIp.setText(ip)
+        editTextPassword.setText(password)
         val buttonConnect = dialog.findViewById<Button>(R.id.button_connect)
         buttonConnect.setOnClickListener {
             dialog.dismiss()
-            presenter.onConnectPressed(editTextIp.text.toString().trim())
+            presenter.onConnectPressed(
+                editTextIp.text.toString().trim(),
+                editTextPassword.text.toString().trim()
+            )
         }
         dialog.show()
     }
@@ -150,7 +131,6 @@ class MainActivity : MvpAppCompatActivity(R.layout.activity_main), MainView,
     }
 
     override fun setConnectedStatus(state: ConnectButtonStates) {
-        Log.e(this.toString(), "setConnectedStatus ")
         binding.buttonConnectedStatus.setStatus(state)
     }
 

@@ -1,4 +1,4 @@
-package com.local.wifi.uiView
+package com.losman.wifiremotecontrol.uiView
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
@@ -8,7 +8,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.LinearInterpolator
-import com.local.wifi.R
+import com.losman.wifiremotecontrol.R
 import kotlin.math.asin
 
 class CircleButton(context: Context, attributeSet: AttributeSet) : View(context, attributeSet),

@@ -1,4 +1,4 @@
-package com.local.wifi.uiView
+package com.losman.wifiremotecontrol.uiView
 
 import android.graphics.Canvas
 import android.graphics.Paint

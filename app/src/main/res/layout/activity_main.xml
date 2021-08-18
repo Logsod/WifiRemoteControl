@@ -25,7 +25,7 @@
                android:inputType="textPersonName"
                android:text="data" />
        -->
-        <com.local.wifi.uiView.ConnectButton
+        <com.losman.wifiremotecontrol.uiView.ConnectButton
             android:id="@+id/buttonConnectedStatus"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -75,7 +75,7 @@
             app:layout_constraintStart_toEndOf="@+id/monitorSvg"
             app:layout_constraintTop_toTopOf="@+id/monitorSvg" />
 
-        <com.local.wifi.uiView.CircleButton
+        <com.losman.wifiremotecontrol.uiView.CircleButton
             android:id="@+id/circleButton"
             android:layout_width="match_parent"
             android:layout_height="140dp"

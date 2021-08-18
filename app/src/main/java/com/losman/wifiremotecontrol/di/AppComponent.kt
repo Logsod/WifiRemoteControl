@@ -1,6 +1,6 @@
-package com.local.wifi.di
+package com.losman.wifiremotecontrol.di
 
-import com.local.wifi.MainActivity
+import com.losman.wifiremotecontrol.MainActivity
 import dagger.Component
 import javax.inject.Singleton
 

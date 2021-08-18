@@ -1,9 +1,9 @@
-package com.local.wifi
+package com.losman.wifiremotecontrol
 
 import android.app.Application
-import com.local.wifi.di.AppComponent
-import com.local.wifi.di.DaggerAppComponent
-import com.local.wifi.di.MainActivityAppModule
+import com.losman.wifiremotecontrol.di.AppComponent
+import com.losman.wifiremotecontrol.di.DaggerAppComponent
+import com.losman.wifiremotecontrol.di.MainActivityAppModule
 
 class App : Application() {
     lateinit var appComponent: AppComponent

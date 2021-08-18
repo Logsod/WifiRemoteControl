@@ -1,4 +1,4 @@
-package com.local.wifi.uiView
+package com.losman.wifiremotecontrol.uiView
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -15,7 +15,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.animation.CycleInterpolator
 import androidx.core.content.ContextCompat
-import com.local.wifi.R
+import com.losman.wifiremotecontrol.R
 
 sealed class ConnectButtonStates
 {

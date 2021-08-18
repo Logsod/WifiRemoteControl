@@ -1,8 +1,9 @@
-package com.local.wifi.presenter
+package com.losman.wifiremotecontrol.presenter
 
 import android.content.Context
-import com.local.wifi.MainView
-import com.local.wifi.uiView.ConnectButtonStates
+import android.util.Log
+import com.losman.wifiremotecontrol.MainView
+import com.losman.wifiremotecontrol.uiView.ConnectButtonStates
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.launch
@@ -60,26 +61,34 @@ class MainPresenter @Inject constructor(
         client.sendCommand("b:2;")
     }
 
-    fun onConnectPressed(remoteServerIp: String) {
-        saveRemoteAddr(remoteServerIp)
+    fun onConnectPressed(remoteServerIp: String, serverPassword: String) {
+        saveSettings(remoteServerIp, serverPassword)
         if (client.isActive) {
             client.disconnect()
             viewState.setConnectedStatus(ConnectButtonStates.DISCONNECTED)
         }
         presenterScope.launch {
-            client.client(remoteServerIp, 8850).subscribeOn(Schedulers.io())
+            client.client(remoteServerIp, 8850, serverPassword).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     {
                         when (it) {
-                            is ClientStatus.Connecting -> {
+                            is RemoteServerStatus.Connecting -> {
                                 viewState.setConnectedStatus(ConnectButtonStates.CONNECTING)
                             }
-                            is ClientStatus.Disconnected -> {
+                            is RemoteServerStatus.Disconnected -> {
                                 viewState.setConnectedStatus(ConnectButtonStates.DISCONNECTED)
                             }
-                            is ClientStatus.Connected -> {
+                            is RemoteServerStatus.Connected -> {
                                 viewState.setConnectedStatus(ConnectButtonStates.CONNECTED)
+                                viewState.showMessage("Connected")
+                            }
+                            is RemoteServerStatus.Message ->{
+                                val re = Regex("[^A-Za-z0-9 ]")
+                                val message = re.replace(it.message, "")
+                                Log.e(this.toString(),message)
+                                viewState.setConnectedStatus(ConnectButtonStates.CONNECTING)
+                                viewState.showMessage(message)
                             }
                         }
                     }, {})
@@ -90,11 +99,14 @@ class MainPresenter @Inject constructor(
     fun onIpPressed() {
         val settings = context.getSharedPreferences("appSettings", Context.MODE_PRIVATE)
         val ip = settings.getString("remoteIp", "") ?: ""
-        viewState.showIpDialog(ip)
+        val password = settings.getString("password", "") ?: ""
+        viewState.showIpDialog(ip, password)
     }
 
-    fun saveRemoteAddr(str: String) {
+    fun saveSettings(ip: String, password: String) {
         val settings = context.getSharedPreferences("appSettings", Context.MODE_PRIVATE)
-        settings.edit().putString("remoteIp", str).apply()
+
+        settings.edit().putString("remoteIp", ip).apply()
+        settings.edit().putString("password", password).apply()
     }
 }
